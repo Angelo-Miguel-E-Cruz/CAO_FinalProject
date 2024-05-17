@@ -64,7 +64,208 @@ main proc
 mov ax,@data
 mov ds,ax
 
-;welcome page
+call Welcome ; welcome page
+
+call Sched ; schedule page
+ 
+;Breakfast list
+Breakfast:
+
+;new line
+call NewLine
+call NewLine
+
+;List Start
+mov ah,9
+lea dx,a12
+int 21h
+
+call NewLine
+
+mov ah,9
+lea dx,a13
+int 21h
+lea dx,a14
+int 21h
+lea dx,a15
+int 21h
+lea dx,a16
+int 21h
+lea dx,a17
+int 21h
+lea dx,a18
+int 21h  
+lea dx,a100
+int 21h
+
+;condition checking
+lea dx,a34
+int 21h
+
+mov ah,1
+int 21h
+mov bl,al
+sub bl,48
+
+jz Exit
+
+cmp bl,6
+jle fifty  
+
+call Invalid
+jmp Breakfast
+
+
+Lunch:
+call NewLine
+call NewLine
+
+;List Start
+mov ah,9
+lea dx,a20
+int 21h
+
+call NewLine
+
+mov ah,9
+lea dx,a21
+int 21h
+lea dx,a22
+int 21h
+lea dx,a23
+int 21h
+lea dx,a24
+int 21h
+lea dx,a25
+int 21h
+lea dx,a26
+int 21h 
+lea dx,a100
+int 21h
+
+;condition checking
+lea dx,a34
+int 21h
+
+mov ah,1
+int 21h
+mov bl,al
+sub bl,48
+
+jz Exit
+
+cmp bl,6
+jle Hundred 
+
+call Invalid
+jmp Lunch
+
+Dinner:
+call NewLine
+call NewLine
+
+;List Start
+mov ah,9
+lea dx,a27
+int 21h
+
+call NewLine
+
+mov ah,9
+lea dx,a28
+int 21h
+lea dx,a29
+int 21h
+lea dx,a30
+int 21h
+lea dx,a31
+int 21h
+lea dx,a32
+int 21h
+lea dx,a33
+int 21h  
+lea dx,a100
+int 21h
+
+;condition checking
+lea dx,a34
+int 21h
+
+mov ah,1
+int 21h
+mov bl,al
+sub bl,48
+
+jz Exit
+
+cmp bl,6
+jle TwoHundred 
+
+call Invalid
+jmp Dinner
+
+Fifty:
+mov bl,5
+call Multip
+
+call Rerun
+
+Hundred:
+mov bl,10
+call Multip
+
+call Rerun
+
+TwoHundred:
+mov bl,20
+call Multip
+
+call Rerun
+
+Exit:
+call Alis
+main endp   
+
+Multip proc
+lea dx,a35
+mov ah,9
+int 21h
+
+mov ah,1
+int 21h
+sub al,48
+
+mul bl
+aam
+
+mov cx,ax
+add ch,48
+add cl,48
+
+
+lea dx,a37
+mov ah,9
+int 21h
+
+mov ah,2
+mov dl,ch
+int 21h
+
+mov dl,cl
+int 21h
+
+mov dl,'0'
+int 21h
+
+mov dl,47
+int 21h
+mov dl,45
+int 21h
+ret
+Multip endp
+
+Welcome proc
+MainPage:
 mov ah,9
 lea dx,a1
 int 21h
@@ -93,9 +294,15 @@ sub bh,48
 
 cmp bh,1
 je Schedule
-jmp Invalid
 
+call Invalid
+call NewLine                 
+jmp MainPage
 
+ret
+Welcome endp
+
+Sched proc
 Schedule:
 call NewLine
 call NewLine
@@ -131,232 +338,15 @@ cmp bh,3
 je Dinner
 
 cmp bh,0
-je Exit
+je Alis
 
-call Hindivalid   
+call Invalid   
 jmp Schedule
- 
-;Breakfast list
-Breakfast:
-
-;new line
-call NewLine
-call NewLine
-
-;List Start
-mov ah,9
-lea dx,a12
-int 21h
-
-call NewLine
-
-mov ah,9
-lea dx,a13
-int 21h
-lea dx,a14
-int 21h
-lea dx,a15
-int 21h
-lea dx,a16
-int 21h
-lea dx,a17
-int 21h
-lea dx,a18
-int 21h
-
-;condition checking
-lea dx,a34
-int 21h
-
-mov ah,1
-int 21h
-mov bl,al
-sub bl,48
-
-cmp bl,1
-je Fifty
-
-cmp bl,2
-je fifty
-
-cmp bl,3
-je fifty
-
-cmp bl,4
-je fifty
-
-cmp bl,5
-je fifty
-
-cmp bl,6
-je fifty
-
-jmp Invalid
-
-
-
-Lunch:
-call NewLine
-call NewLine
-
-;List Start
-mov ah,9
-lea dx,a20
-int 21h
-
-call NewLine
-
-mov ah,9
-lea dx,a21
-int 21h
-lea dx,a22
-int 21h
-lea dx,a23
-int 21h
-lea dx,a24
-int 21h
-lea dx,a25
-int 21h
-lea dx,a26
-int 21h
-
-;condition checking
-lea dx,a34
-int 21h
-
-mov ah,1
-int 21h
-mov bl,al
-sub bl,48
-
-cmp bl,1
-je Hundred
-
-cmp bl,2
-je Hundred
-
-cmp bl,3
-je Hundred
-
-cmp bl,4
-je Hundred
-
-cmp bl,5
-je Hundred
-
-cmp bl,6
-je Hundred
-
-jmp Invalid
-
-;for exit
-call NewLine
-
-mov ah,9
-lea dx,a38
-int 21h
-
-mov ah,1
-int 21h
-mov bh,al
-
-cmp bh,1
-jmp Exit
-
-
-Dinner:
-call NewLine
-call NewLine
-
-;List Start
-mov ah,9
-lea dx,a27
-int 21h
-
-call NewLine
-
-mov ah,9
-lea dx,a28
-int 21h
-lea dx,a29
-int 21h
-lea dx,a30
-int 21h
-lea dx,a31
-int 21h
-lea dx,a32
-int 21h
-lea dx,a33
-int 21h
-
-;condition checking
-lea dx,a34
-int 21h
-
-mov ah,1
-int 21h
-mov bl,al
-sub bl,48
-
-cmp bl,1
-je TwoHundred
-
-cmp bl,2
-je TwoHundred
-
-cmp bl,3
-je TwoHundred
-
-cmp bl,4
-je TwoHundred
-
-cmp bl,5
-je TwoHundred
-
-cmp bl,6
-je TwoHundred
-
-jmp Invalid
-
-
-Fifty:
-mov bl,5
-lea dx,a35
-mov ah,9
-int 21h
-
-mov ah,1
-int 21h
-sub al,48
-
-mul bl
-aam
-
-mov cx,ax
-add ch,48
-add cl,48
-
-
-lea dx,a37
-mov ah,9
-int 21h
-
-mov ah,2
-mov dl,ch
-int 21h
-
-mov dl,cl
-int 21h
-
-mov dl,'0'
-int 21h
-
-mov dl,47
-int 21h
-mov dl,45
-int 21h
-
-;for exit or main menu
+ret
+Sched endp
+           
+Rerun proc   
+TryAgain:
 call NewLine
 
 mov ah,9
@@ -381,155 +371,11 @@ je Schedule
 cmp al,2
 je Exit
 
-jmp Invalid
-
-
-Hundred:
-mov bl,10
-lea dx,a35
-mov ah,9
-int 21h
-
-mov ah,1
-int 21h
-sub al,48
-
-mul bl
-aam
-
-mov cx,ax
-add ch,48
-add cl,48
-
-
-lea dx,a37
-mov ah,9
-int 21h
-
-mov ah,2
-mov dl,ch
-int 21h
-
-mov dl,cl
-int 21h
-
-mov dl,'0'
-int 21h
-
-mov dl,47
-int 21h
-mov dl,45
-int 21h
-
-;for exit
-call NewLine
-
-mov ah,9
-lea dx,a38
-int 21h
-
-mov ah,9
-lea dx,a39
-int 21h
-
-mov ah,9
-lea dx,a8
-int 21h
-
-mov ah,1
-int 21h
-sub al,48
-
-cmp al,1
-je Schedule
-
-cmp al,2
-je Exit
-
-jmp Invalid
-
-
-TwoHundred:
-mov bl,20
-lea dx,a35
-mov ah,9
-int 21h
-
-mov ah,1
-int 21h
-sub al,48
-
-mul bl
-aam
-
-mov cx,ax
-add ch,48
-add cl,48
-
-
-lea dx,a37
-mov ah,9
-int 21h
-
-mov ah,2
-mov dl,ch
-int 21h
-
-mov dl,cl
-int 21h
-
-mov dl,'0'
-int 21h
-
-mov dl,47
-int 21h
-mov dl,45
-int 21h
-
-;for exit
-call NewLine
-
-mov ah,9
-lea dx,a38
-int 21h
-
-mov ah,9
-lea dx,a39
-int 21h
-
-mov ah,9
-lea dx,a8
-int 21h
-
-mov ah,1
-int 21h
-sub al,48
-
-cmp al,1
-je Schedule
-
-cmp al,2
-je Exit
-
-jmp Invalid
-
-
-Invalid:
-;new line
-call NewLine
-call NewLine
-
-
-mov ah,9
-lea dx,a36
-int 21h
-;jmp Exit
-
-
-Exit:
-call Alis
-main endp   
-
+call Invalid 
+jmp TryAgain
+ret
+Rerun endp           
+           
 Alis proc 
 call NewLine
 call NewLine 
@@ -540,7 +386,7 @@ mov ah,4ch
 int 21h
 Alis endp   
    
-Hindivalid proc
+Invalid proc
 call NewLine
 call NewLine
 
@@ -549,7 +395,7 @@ mov ah,9
 lea dx,a36
 int 21h    
 ret
-Hindivalid endp
+Invalid endp
 
 NewLine proc
 mov ah,2
