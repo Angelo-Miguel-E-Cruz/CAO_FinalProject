@@ -64,10 +64,12 @@ msg48 db 10,13,'                    Press 9 to Go Back$'
 msg46 db 10,13,'                    Thank You for Ordering! Please Come Again!$'
 
 ;Total Price
-totPrice db 0
+totPrice dw 0  
+currPrice dw 0
 Price_str db '000$', 0Ah
 currPriceL db 0
-currPriceH db 0 
+currPriceH db 0
+currPrice_str db '000$', 0Ah 
 temp db 0
 
 .code
@@ -397,7 +399,10 @@ jmp leave
 
 main endp   
 
-Multip proc
+Multip proc 
+mov ah, 0
+mov currPrice, ax
+
 lea dx,msg35
 mov ah,9
 int 21h
@@ -406,64 +411,35 @@ mov ah,1
 int 21h
 sub al,48
 
-mul bl
-aam               
+mul bl             
 
-mov [currPriceL], al
-mov [currPriceH], ah
+mov currPriceL, al
+mov currPriceH, ah
 
 mov cx, 10                                               
 mul cx 
 
 cmp al, 0
-je totPriceH
+jne totPriceL
 
-totPriceH:      
-mov cx, 10
+totPriceH:  
 mul cx
-add totPrice, ah
+add totPrice, ax 
+add currPrice, ax
+jmp totPriceL
 
-add totPrice, al
+totPriceL:
+add totPrice, ax 
+add currPrice, ax
 
-mov al, [currPriceL]
-mov ah, [currPriceH]
+mov al, currPriceL
+mov ah, currPriceH
 
-mov cx,ax
-add ch,48
-add cl,48
-
-lea dx,msg37
-mov ah,9
-int 21h
-
-mov ah,2 
-
-cmp ch, '0'
-jne Hundreds
-
-Tens:
-mov dl,cl
-int 21h
-
-mov dl,'0'
-int 21h
-ret
-
-
-Hundreds:   
-mov dl,ch
-int 21h
-jmp Tens
-
-
-Multip endp
-
-TotalPrice proc
-mov al, [totPrice]
+mov ax, currPrice
 xor ah, ah
 aam
 
-mov si, offset Price_str
+mov si, offset currPrice_str
 
 add al, '0'
 mov [si+2], al
@@ -476,6 +452,52 @@ mov [si+1], al
 
 add ah, '0'
 mov [si], ah
+
+mov ah,9
+lea dx,msg37
+int 21h
+
+cmp [si], 0
+jne printAll
+
+printTens:
+mov al, [si+1]
+mov [si], al
+
+mov al, [si+2]
+mov [si+1], al   
+
+mov al, [si+3]
+mov [si+2], al  
+
+lea dx, currPrice_str
+int 21h
+ret      
+
+printAll:
+lea dx, currPrice_str
+int 21h 
+ret
+Multip endp
+
+TotalPrice proc
+mov ax, totPrice
+xor dx, dx
+mov cx, 10
+div cx
+
+mov si, offset Price_str
+
+add dl, '0'
+mov [si+2], dl
+
+mov al, ah
+add al, '0'
+mov [si+1], al
+
+mov al, ah
+add al, '0'
+mov [si], al
 ret
 TotalPrice endp
 
