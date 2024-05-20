@@ -1,63 +1,59 @@
-.model large
+.model small
 .stack 1000h
 .data
 
 ;welcome page
-a1 db 10,13,'                   ******************************************$'
-a2 db 10,13,'                   **                 Welcome              **$'
-a3 db 10,13,'                   **                    To                **$'
-a4 db 10,13,'                   **            Resturant Management      **$'
-a5 db 10,13,'                   **                  System              **$'
-a6 db 10,13,'                   ******************************************$'
+msg1 db 10,13,'                   ******************************************$'
+msg2 db 10,13,'                   **                Welcome               **$'
+msg3 db 10,13,'                   **                  To                  **$'
+msg4 db 10,13,'                   **           Pastilan ni Itan           **$'
+msg6 db 10,13,'                   ******************************************$'
 
 ;choose
-a7 db 10,13,'                    Schedule---$'
-a8 db 10,13,'                    Enter Your Choise: $'
-a19 db 10,13,'                          Enter 1 to Display Schedule: $'
-a34 db 10,13,'                            Peak Your Item: $'
-a35 db 10,13,'                            Enter Quantity: $'
-a36 db 10,13,'                        Invalid Input !! Rerun the Program$'
-a37 db 10,13,'                            Total Price: $'
-a38 db 10,13,'                    1.Schedule: $'
-a39 db 10,13,'                    2.Exit: $'
+msg7 db 10,13,'                    Schedule---$'
+msg8 db 10,13,'                    Enter Your Choice: $'
+msg31 db 10,13,'                          Enter 1 to See Menu Options: $'
+msg34 db 10,13,'                            Pick Your Item: $'
+msg35 db 10,13,'                            Enter Quantity: $'
+msg36 db 10,13,'                        Invalid Input! Please Try Again.$'
+msg37 db 10,13,'                            Total Price: Php $'
+msg38 db 10,13,'                    1.Menu: $'
+msg39 db 10,13,'                    2.Exit: $'
 
 
-;Schedulelist
-a9 db 10,13,'                        1. Breakfast$'
-a10 db 10,13,'                        2. Lunch$'
-a11 db 10,13,'                        3. Dinner$'
+;Schedule
+msg9 db 10,13,'                        1. Chicken$'
+msg10 db 10,13,'                        2. Beef$'
+msg11 db 10,13,'                        3. Add-Ons/Drinks$'
 
-;Breakfast List
-a12 db 10,13,'                  ********      Breakfast List      ********$'
-a13 db 10,13,'                       1.Paratha+Dal             50/-$'
-a14 db 10,13,'                       2.Paratha+Vegetable       50/-$'
-a15 db 10,13,'                       3.Paratha+Fried Egg       50/-$'
-a16 db 10,13,'                       4.Luchi+Chicken Curry     50/-$'
-a17 db 10,13,'                       5.Chicken Soup+Nan        50/-$'
-a18 db 10,13,'                       6.Nehari+Nan              50/-$'
+;Chicken List
+msg12 db 10,13,'                  ********      Chicken Pastil      ********$'
+msg13 db 10,13,'                       1.Regular Chicken             Php 20$'
+msg14 db 10,13,'                       2.Spicy Chicken               Php 30$'
+msg15 db 10,13,'                       3.Double Regular              Php 40$'
+msg16 db 10,13,'                       4.Double Spicy                Php 60$'
+msg17 db 10,13,'                       5.Mixed Chicken               Php 50$'
 
-
-;Lunch List
-a20 db 10,13,'                  ********        Lunch List        ********$'
-a21 db 10,13,'                       1.Kachchi Birani          100/-$'
-a22 db 10,13,'                       2.Chicken Birani          100/-$'
-a23 db 10,13,'                       3.Chicken Bhuna Khichuri  100/-$'
-a24 db 10,13,'                       4.Rice+Fish Curry         100/-$'
-a25 db 10,13,'                       5.Rice+Chicken Curry      100/-$'
-a26 db 10,13,'                       6.Rice+Beaf Curry         100/-$'
+;Beef List
+msg18 db 10,13,'                  ********        Beef Pastil       ********$'
+msg19 db 10,13,'                       1.Regular Beef                Php 40$'
+msg20 db 10,13,'                       2.Spicy Beef                  Php 50$'
+msg21 db 10,13,'                       3.Double Regular              Php 80$'
+msg22 db 10,13,'                       4.Double Spicy                Php 100$'
+msg23 db 10,13,'                       5.Mixed Beef                  Php 90$'
 
 
-;Dinner List
-a27 db 10,13,'                  ********        Dinner List       ********$'
-a28 db 10,13,'                       1.Rice+Mutton Curry       200/-$'
-a29 db 10,13,'                       2.Rice+Beef Curry         200/-$'
-a30 db 10,13,'                       3.Polaw+Mutton Curry      200/-$'
-a31 db 10,13,'                       4.Rice+Hilsha Fish Fry    200/-$'
-a32 db 10,13,'                       5.Bottle Gourd Soup       200/-$'
-a33 db 10,13,'                       6.Mixed Vegetable Soup    200/-$'
+;Add-Ons List
+msg24 db 10,13,'                  ********      Add-Ons/Drinks      ********$'
+msg25 db 10,13,'                       1.Extra Rice                  Php 20/-$'
+msg26 db 10,13,'                       2.Coke                        Php 30/-$'
+msg27 db 10,13,'                       3.Royal                       Php 30/-$'
+msg28 db 10,13,'                       4.Sprite                      Php 30/-$'
+msg29 db 10,13,'                       5.Mountain Dew                Php 40/-$'
+msg30 db 10,13,'                       6.Boiled Egg                  Php 10/-$'
   
-a100 db 10,13,'                        0. Exit$'
-a101 db 10,13,'                    Tanginamo---$'
+msg32 db 10,13,'                        0. Exit$'
+msg33 db 10,13,'                    Tanginamo---$'
 .code
 main proc
 
@@ -68,8 +64,8 @@ call Welcome ; welcome page
 
 call Sched ; schedule page
  
-;Breakfast list
-Breakfast:
+;Chicken list
+Chicken:
 
 ;new line
 call NewLine
@@ -77,29 +73,27 @@ call NewLine
 
 ;List Start
 mov ah,9
-lea dx,a12
+lea dx,msg12
 int 21h
 
 call NewLine
 
 mov ah,9
-lea dx,a13
+lea dx,msg13
 int 21h
-lea dx,a14
+lea dx,msg14
 int 21h
-lea dx,a15
+lea dx,msg15
 int 21h
-lea dx,a16
+lea dx,msg16
 int 21h
-lea dx,a17
-int 21h
-lea dx,a18
-int 21h  
-lea dx,a100
+lea dx,msg17
+int 21h   
+lea dx,msg32
 int 21h
 
 ;condition checking
-lea dx,a34
+lea dx,msg34
 int 21h
 
 mov ah,1
@@ -109,42 +103,109 @@ sub bl,48
 
 jz Exit
 
-cmp bl,6
-jle fifty  
+cmp bl,1
+je twenty
+
+cmp bl,2
+je thirty
+
+cmp bl,3
+je fourty
+
+cmp bl,4
+je sixty
+
+cmp bl,5
+je fifty  
 
 call Invalid
-jmp Breakfast
+jmp Chicken
 
-
-Lunch:
+;Beef List
+Beef:
 call NewLine
 call NewLine
 
 ;List Start
 mov ah,9
-lea dx,a20
+lea dx,msg18
 int 21h
 
 call NewLine
 
 mov ah,9
-lea dx,a21
+lea dx,msg19
 int 21h
-lea dx,a22
+lea dx,msg20
 int 21h
-lea dx,a23
+lea dx,msg21
 int 21h
-lea dx,a24
+lea dx,msg22
 int 21h
-lea dx,a25
+lea dx,msg23
 int 21h
-lea dx,a26
+lea dx,msg32
+int 21h
+
+;condition checking
+lea dx,msg34
+int 21h
+
+mov ah,1
+int 21h
+mov bl,al
+sub bl,48
+
+jz Exit
+
+cmp bl,1
+je fourty
+
+cmp bl,2
+je fifty
+
+cmp bl,3
+je eighty
+
+cmp bl,4
+je hundred
+
+cmp bl,5
+je ninety  
+
+
+call Invalid
+jmp Beef
+
+AddOns:
+call NewLine
+call NewLine
+
+;List Start
+mov ah,9
+lea dx,msg24
+int 21h
+
+call NewLine
+
+mov ah,9
+lea dx,msg25
+int 21h
+lea dx,msg26
+int 21h
+lea dx,msg27
+int 21h
+lea dx,msg28
+int 21h
+lea dx,msg29
 int 21h 
-lea dx,a100
+lea dx,msg30
+int 21h 
+lea dx,msg32
 int 21h
 
 ;condition checking
-lea dx,a34
+lea dx,msg34
 int 21h
 
 mov ah,1
@@ -154,58 +215,79 @@ sub bl,48
 
 jz Exit
 
-cmp bl,6
-jle Hundred 
-
-call Invalid
-jmp Lunch
-
-Dinner:
-call NewLine
-call NewLine
-
-;List Start
-mov ah,9
-lea dx,a27
-int 21h
-
-call NewLine
-
-mov ah,9
-lea dx,a28
-int 21h
-lea dx,a29
-int 21h
-lea dx,a30
-int 21h
-lea dx,a31
-int 21h
-lea dx,a32
-int 21h
-lea dx,a33
-int 21h  
-lea dx,a100
-int 21h
-
-;condition checking
-lea dx,a34
-int 21h
-
-mov ah,1
-int 21h
-mov bl,al
-sub bl,48
-
 jz Exit
 
+cmp bl,1
+je twenty
+
+cmp bl,2
+je thirty
+
+cmp bl,3
+je thirty
+
+cmp bl,4
+je thirty
+
+cmp bl,5
+je fourty 
+
 cmp bl,6
-jle TwoHundred 
+je ten 
 
 call Invalid
-jmp Dinner
+jmp AddOns
+
+Ten:
+mov bl,1
+call Multip
+
+call Rerun
+
+Twenty:
+mov bl,2
+call Multip
+
+call Rerun
+
+Thirty:
+mov bl,3
+call Multip
+
+call Rerun
+
+Fourty:
+mov bl,4
+call Multip
+
+call Rerun
 
 Fifty:
 mov bl,5
+call Multip
+
+call Rerun
+
+Sixty:
+mov bl,6
+call Multip
+
+call Rerun
+
+Seventy:
+mov bl,7
+call Multip
+
+call Rerun
+
+Eighty:
+mov bl,8
+call Multip
+
+call Rerun
+
+Ninety:
+mov bl,9
 call Multip
 
 call Rerun
@@ -216,18 +298,12 @@ call Multip
 
 call Rerun
 
-TwoHundred:
-mov bl,20
-call Multip
-
-call Rerun
-
 Exit:
 call Alis
 main endp   
 
 Multip proc
-lea dx,a35
+lea dx,msg35
 mov ah,9
 int 21h
 
@@ -243,7 +319,7 @@ add ch,48
 add cl,48
 
 
-lea dx,a37
+lea dx,msg37
 mov ah,9
 int 21h
 
@@ -255,29 +331,23 @@ mov dl,cl
 int 21h
 
 mov dl,'0'
-int 21h
+int 21h   
 
-mov dl,47
-int 21h
-mov dl,45
-int 21h
 ret
 Multip endp
 
 Welcome proc
 MainPage:
 mov ah,9
-lea dx,a1
+lea dx,msg1
 int 21h
-lea dx,a2
+lea dx,msg2
 int 21h
-lea dx,a3
+lea dx,msg3
 int 21h
-lea dx,a4
+lea dx,msg4
 int 21h
-lea dx,a5
-int 21h
-lea dx,a6
+lea dx,msg6
 int 21h
 
 call NewLine
@@ -285,7 +355,7 @@ call NewLine
 
 ;take input to start
 mov ah,9
-lea dx,a19
+lea dx,msg31
 int 21h
 mov ah,1
 int 21h
@@ -308,19 +378,19 @@ call NewLine
 call NewLine
 
 mov ah,9
-lea dx,a7
+lea dx,msg7
 int 21h
-lea dx,a9
+lea dx,msg9
 int 21h
-lea dx,a10
+lea dx,msg10
 int 21h
-lea dx,a11
+lea dx,msg11
 int 21h   
-lea dx,a100
+lea dx,msg32
 int 21h
 
 ;list choose
-lea dx,a8
+lea dx,msg8
 int 21h
 
 mov ah,1
@@ -329,13 +399,13 @@ mov bh,al
 sub bh,48
 
 cmp bh,1
-je Breakfast
+je Chicken
 
 cmp bh,2
-je Lunch
+je Beef
 
 cmp bh,3
-je Dinner
+je AddOns
 
 cmp bh,0
 je Alis
@@ -350,15 +420,15 @@ TryAgain:
 call NewLine
 
 mov ah,9
-lea dx,a38
+lea dx,msg38
 int 21h
 
 mov ah,9
-lea dx,a39
+lea dx,msg39
 int 21h
 
 mov ah,9
-lea dx,a8
+lea dx,msg8
 int 21h
 
 mov ah,1
@@ -380,7 +450,7 @@ Alis proc
 call NewLine
 call NewLine 
 mov ah,9
-lea dx,a101
+lea dx,msg33
 int 21h
 mov ah,4ch
 int 21h
@@ -392,7 +462,7 @@ call NewLine
 
 
 mov ah,9
-lea dx,a36
+lea dx,msg36
 int 21h    
 ret
 Invalid endp
