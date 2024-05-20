@@ -413,7 +413,16 @@ mov [currPriceL], al
 mov [currPriceH], ah
 
 mov cx, 10                                               
+mul cx 
+
+cmp al, 0
+je totPriceH
+
+totPriceH:      
+mov cx, 10
 mul cx
+add totPrice, ah
+
 add totPrice, al
 
 mov al, [currPriceL]
@@ -427,17 +436,26 @@ lea dx,msg37
 mov ah,9
 int 21h
 
-mov ah,2
-mov dl,ch
+mov ah,2 
 
-int 21h
+cmp ch, '0'
+jne Hundreds
+
+Tens:
 mov dl,cl
 int 21h
 
 mov dl,'0'
-int 21h   
-
+int 21h
 ret
+
+
+Hundreds:   
+mov dl,ch
+int 21h
+jmp Tens
+
+
 Multip endp
 
 TotalPrice proc
