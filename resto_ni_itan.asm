@@ -11,22 +11,23 @@ msg6 db 10,13,'                   ******************************************$'
 
 ;Choose
 msg7 db 10,13,'                    Menu---$'
-msg8 db 10,13,'                  Enter Your Choice: $'
+msg8 db 10,13,'                          Enter Your Choice: $'
 msg31 db 10,13,'                          Enter 1 to See Menu Options $'
-msg40 db 10,13,'                          Enter 0 to Exit $'       
-msg41 db 10,13,'                          Input: $'
-msg34 db 10,13,'                            Pick Your Item: $'
-msg35 db 10,13,'                            Enter Quantity: $'
+msg40 db 10,13,'                          Enter 0 to Exit $' 
+msg34 db 10,13,'                          Pick Your Item: $'
+msg35 db 10,13,'                          Enter Quantity: $'
 msg36 db 10,13,'                        Invalid Input! Please Try Again.$'
-msg37 db 10,13,'                            Order Price: Php $'
-msg38 db 10,13,'                    1. Menu $'
-msg39 db 10,13,'                    2. Proceed to Checkout $'
-msg45 db 10,13,'                    0. Cancel Order$'
+msg37 db 10,13,'                          Order Price: Php $'
+msg38 db 10,13,'                       1. Menu $'
+msg39 db 10,13,'                       2. Proceed to Checkout $'
+msg47 db 10,13,'                       9. Back $'
+msg45 db 10,13,'                       0. Cancel Order$'
 
 ;Menu
 msg9 db 10,13,'                       1. Chicken$'
 msg10 db 10,13,'                       2. Beef$'
 msg11 db 10,13,'                       3. Add-Ons/Drinks$'
+msg49 db 10,13,'                       4. Proceed to Checkout$'
 
 ;Chicken List
 msg12 db 10,13,'                  ********      Chicken Pastil      ********$'
@@ -58,7 +59,8 @@ msg32 db 10,13,'                       0. Exit$'
 msg33 db 10,13,'                    Please Come Again!$'
 msg42 db 10,13,'                    Total Price: Php $'
 msg43 db 10,13,'                    Press 1 to Confirm Payment$'
-msg44 db 10,13,'                    Press 0 to Cancel Order$'
+msg44 db 10,13,'                    Press 0 to Cancel Order$'  
+msg48 db 10,13,'                    Press 9 to Go Back$'
 msg46 db 10,13,'                    Thank You for Ordering! Please Come Again!$'
 
 ;Total Price
@@ -104,6 +106,8 @@ int 21h
 lea dx,msg17
 int 21h   
 lea dx,msg32
+int 21h    
+lea dx,msg47
 int 21h
 
 ;condition checking
@@ -130,7 +134,10 @@ cmp bl,4
 je sixty
 
 cmp bl,5
-je fifty  
+je fifty 
+
+cmp bl,9
+je menuList 
 
 call Invalid
 jmp Chicken
@@ -159,6 +166,8 @@ int 21h
 lea dx,msg23
 int 21h
 lea dx,msg32
+int 21h   
+lea dx,msg47
 int 21h
 
 ;condition checking
@@ -185,8 +194,10 @@ cmp bl,4
 je hundred
 
 cmp bl,5
-je ninety  
+je ninety 
 
+cmp bl,9
+je menuList   
 
 call Invalid
 jmp Beef
@@ -216,6 +227,8 @@ int 21h
 lea dx,msg30
 int 21h 
 lea dx,msg32
+int 21h   
+lea dx,msg47
 int 21h
 
 ;condition checking
@@ -247,9 +260,14 @@ je fourty
 cmp bl,6
 je ten 
 
+cmp bl,9
+je menuList 
+
 call Invalid
 jmp AddOns
 
+
+;Prices
 Ten:
 mov bl,1
 call Multip
@@ -310,9 +328,15 @@ call Multip
 
 call Rerun
 
+menuList:
+call List
+
+;To Exit
 Exit:
 call Alis 
 
+
+;Checkout
 Checkout:
 leave: 
 call Newline
@@ -333,6 +357,10 @@ int 21h
 
 mov ah,9
 lea dx,msg44
+int 21h
+
+mov ah,9
+lea dx,msg48
 int 21h 
 
 mov ah,9
@@ -346,14 +374,22 @@ sub bl,48
 
 jz Exit
 
+cmp bl, 9
+je Back
+
 cmp bl, 1
-jg inv
- 
+jne inv  
+
+call Newline
+call Newline 
 mov ah,9
 lea dx, msg46
 int 21h
 mov ah,4ch
 int 21h     
+
+Back:
+call Rerun
 
 Inv:
 call Invalid
@@ -452,7 +488,7 @@ lea dx,msg31
 int 21h 
 lea dx,msg40
 int 21h  
-lea dx,msg41
+lea dx,msg8
 int 21h     
 
 mov ah,1
@@ -487,6 +523,8 @@ int 21h
 lea dx,msg11
 int 21h   
 lea dx,msg32
+int 21h   
+lea dx,msg49
 int 21h
 
 ;list choose
@@ -498,6 +536,8 @@ int 21h
 mov bh,al
 sub bh,48
 
+jz Alis
+
 cmp bh,1
 je Chicken
 
@@ -507,8 +547,8 @@ je Beef
 cmp bh,3
 je AddOns
 
-cmp bh,0
-je Alis
+cmp bh,4
+je Leave
 
 call Invalid   
 jmp Menu
@@ -529,7 +569,7 @@ int 21h
 
 mov ah,9
 lea dx, msg45
-int 21h
+int 21h    
 
 mov ah,9
 lea dx,msg8
