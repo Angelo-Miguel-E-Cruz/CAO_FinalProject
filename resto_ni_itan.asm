@@ -2,58 +2,72 @@
 .stack 1000h
 .data
 
-;welcome page
+;Welcome
 msg1 db 10,13,'                   ******************************************$'
 msg2 db 10,13,'                   **                Welcome               **$'
 msg3 db 10,13,'                   **                  To                  **$'
 msg4 db 10,13,'                   **           Pastilan ni Itan           **$'
 msg6 db 10,13,'                   ******************************************$'
 
-;choose
-msg7 db 10,13,'                    Schedule---$'
-msg8 db 10,13,'                    Enter Your Choice: $'
-msg31 db 10,13,'                          Enter 1 to See Menu Options: $'
+;Choose
+msg7 db 10,13,'                    Menu---$'
+msg8 db 10,13,'                  Enter Your Choice: $'
+msg31 db 10,13,'                          Enter 1 to See Menu Options $'
+msg40 db 10,13,'                          Enter 0 to Exit $'       
+msg41 db 10,13,'                          Input: $'
 msg34 db 10,13,'                            Pick Your Item: $'
 msg35 db 10,13,'                            Enter Quantity: $'
 msg36 db 10,13,'                        Invalid Input! Please Try Again.$'
-msg37 db 10,13,'                            Total Price: Php $'
-msg38 db 10,13,'                    1.Menu: $'
-msg39 db 10,13,'                    2.Exit: $'
+msg37 db 10,13,'                            Order Price: Php $'
+msg38 db 10,13,'                    1. Menu $'
+msg39 db 10,13,'                    2. Proceed to Checkout $'
+msg45 db 10,13,'                    0. Cancel Order$'
 
-
-;Schedule
-msg9 db 10,13,'                        1. Chicken$'
-msg10 db 10,13,'                        2. Beef$'
-msg11 db 10,13,'                        3. Add-Ons/Drinks$'
+;Menu
+msg9 db 10,13,'                       1. Chicken$'
+msg10 db 10,13,'                       2. Beef$'
+msg11 db 10,13,'                       3. Add-Ons/Drinks$'
 
 ;Chicken List
 msg12 db 10,13,'                  ********      Chicken Pastil      ********$'
-msg13 db 10,13,'                       1.Regular Chicken             Php 20$'
-msg14 db 10,13,'                       2.Spicy Chicken               Php 30$'
-msg15 db 10,13,'                       3.Double Regular              Php 40$'
-msg16 db 10,13,'                       4.Double Spicy                Php 60$'
-msg17 db 10,13,'                       5.Mixed Chicken               Php 50$'
+msg13 db 10,13,'                       1. Regular Chicken             Php 20$'
+msg14 db 10,13,'                       2. Spicy Chicken               Php 30$'
+msg15 db 10,13,'                       3. Double Regular              Php 40$'
+msg16 db 10,13,'                       4. Double Spicy                Php 60$'
+msg17 db 10,13,'                       5. Mixed Chicken               Php 50$'
 
 ;Beef List
 msg18 db 10,13,'                  ********        Beef Pastil       ********$'
-msg19 db 10,13,'                       1.Regular Beef                Php 40$'
-msg20 db 10,13,'                       2.Spicy Beef                  Php 50$'
-msg21 db 10,13,'                       3.Double Regular              Php 80$'
-msg22 db 10,13,'                       4.Double Spicy                Php 100$'
-msg23 db 10,13,'                       5.Mixed Beef                  Php 90$'
-
+msg19 db 10,13,'                       1. Regular Beef                Php 40$'
+msg20 db 10,13,'                       2. Spicy Beef                  Php 50$'
+msg21 db 10,13,'                       3. Double Regular              Php 80$'
+msg22 db 10,13,'                       4. Double Spicy                Php 100$'
+msg23 db 10,13,'                       5. Mixed Beef                  Php 90$'
 
 ;Add-Ons List
 msg24 db 10,13,'                  ********      Add-Ons/Drinks      ********$'
-msg25 db 10,13,'                       1.Extra Rice                  Php 20/-$'
-msg26 db 10,13,'                       2.Coke                        Php 30/-$'
-msg27 db 10,13,'                       3.Royal                       Php 30/-$'
-msg28 db 10,13,'                       4.Sprite                      Php 30/-$'
-msg29 db 10,13,'                       5.Mountain Dew                Php 40/-$'
-msg30 db 10,13,'                       6.Boiled Egg                  Php 10/-$'
-  
-msg32 db 10,13,'                        0. Exit$'
-msg33 db 10,13,'                    Tanginamo---$'
+msg25 db 10,13,'                       1. Extra Rice                  Php 20/-$'
+msg26 db 10,13,'                       2. Coke                        Php 30/-$'
+msg27 db 10,13,'                       3. Royal                       Php 30/-$' 
+msg28 db 10,13,'                       4. Sprite                      Php 30/-$'
+msg29 db 10,13,'                       5. Mountain Dew                Php 40/-$'
+msg30 db 10,13,'                       6. Boiled Egg                  Php 10/-$'
+
+;Exit  
+msg32 db 10,13,'                       0. Exit$'
+msg33 db 10,13,'                    Please Come Again!$'
+msg42 db 10,13,'                    Total Price: Php $'
+msg43 db 10,13,'                    Press 1 to Confirm Payment$'
+msg44 db 10,13,'                    Press 0 to Cancel Order$'
+msg46 db 10,13,'                    Thank You for Ordering! Please Come Again!$'
+
+;Total Price
+totPrice db 0
+Price_str db '000$', 0Ah
+currPriceL db 0
+currPriceH db 0 
+temp db 0
+
 .code
 main proc
 
@@ -62,7 +76,7 @@ mov ds,ax
 
 call Welcome ; welcome page
 
-call Sched ; schedule page
+call List ; Menu page
  
 ;Chicken list
 Chicken:
@@ -215,8 +229,6 @@ sub bl,48
 
 jz Exit
 
-jz Exit
-
 cmp bl,1
 je twenty
 
@@ -299,7 +311,54 @@ call Multip
 call Rerun
 
 Exit:
-call Alis
+call Alis 
+
+Checkout:
+leave: 
+call Newline
+call Newline
+call TotalPrice
+
+mov ah,9
+lea dx,msg42
+int 21h              
+
+mov ah,9
+lea dx, Price_str
+int 21h
+
+mov ah,9
+lea dx,msg43
+int 21h   
+
+mov ah,9
+lea dx,msg44
+int 21h 
+
+mov ah,9
+lea dx,msg8
+int 21h
+
+mov ah,1
+int 21h
+mov bl,al
+sub bl,48
+
+jz Exit
+
+cmp bl, 1
+jg inv
+ 
+mov ah,9
+lea dx, msg46
+int 21h
+mov ah,4ch
+int 21h     
+
+Inv:
+call Invalid
+jmp leave
+
 main endp   
 
 Multip proc
@@ -312,12 +371,21 @@ int 21h
 sub al,48
 
 mul bl
-aam
+aam               
+
+mov [currPriceL], al
+mov [currPriceH], ah
+
+mov cx, 10                                               
+mul cx
+add totPrice, al
+
+mov al, [currPriceL]
+mov ah, [currPriceH]
 
 mov cx,ax
 add ch,48
 add cl,48
-
 
 lea dx,msg37
 mov ah,9
@@ -325,8 +393,8 @@ int 21h
 
 mov ah,2
 mov dl,ch
-int 21h
 
+int 21h
 mov dl,cl
 int 21h
 
@@ -335,6 +403,31 @@ int 21h
 
 ret
 Multip endp
+
+TotalPrice proc
+mov al, [totPrice]
+xor ah, ah
+aam
+
+mov si, offset Price_str
+
+add al, '0'
+mov [si+2], al
+
+mov al, ah
+xor ah, ah
+aam
+add al, '0'
+mov [si+1], al
+
+add ah, '0'
+mov [si], ah
+ret
+TotalPrice endp
+
+mov ah,2
+mov dl, [si]
+int 21h
 
 Welcome proc
 MainPage:
@@ -356,14 +449,21 @@ call NewLine
 ;take input to start
 mov ah,9
 lea dx,msg31
-int 21h
+int 21h 
+lea dx,msg40
+int 21h  
+lea dx,msg41
+int 21h     
+
 mov ah,1
 int 21h
 mov bh,al
 sub bh,48
+       
+jz Exit
 
 cmp bh,1
-je Schedule
+je Menu
 
 call Invalid
 call NewLine                 
@@ -372,8 +472,8 @@ jmp MainPage
 ret
 Welcome endp
 
-Sched proc
-Schedule:
+List proc
+Menu:
 call NewLine
 call NewLine
 
@@ -411,9 +511,9 @@ cmp bh,0
 je Alis
 
 call Invalid   
-jmp Schedule
+jmp Menu
 ret
-Sched endp
+List endp
            
 Rerun proc   
 TryAgain:
@@ -425,6 +525,10 @@ int 21h
 
 mov ah,9
 lea dx,msg39
+int 21h   
+
+mov ah,9
+lea dx, msg45
 int 21h
 
 mov ah,9
@@ -435,11 +539,13 @@ mov ah,1
 int 21h
 sub al,48
 
+jz Exit
+
 cmp al,1
-je Schedule
+je Menu
 
 cmp al,2
-je Exit
+je Checkout
 
 call Invalid 
 jmp TryAgain
@@ -448,7 +554,8 @@ Rerun endp
            
 Alis proc 
 call NewLine
-call NewLine 
+call NewLine
+ 
 mov ah,9
 lea dx,msg33
 int 21h
