@@ -47,12 +47,12 @@ msg23 db 10,13,'                       5. Mixed Beef                  Php 90$'
 
 ;Add-Ons List
 msg24 db 10,13,'                  ********      Add-Ons/Drinks      ********$'
-msg25 db 10,13,'                       1. Extra Rice                  Php 20/-$'
-msg26 db 10,13,'                       2. Coke                        Php 30/-$'
-msg27 db 10,13,'                       3. Royal                       Php 30/-$' 
-msg28 db 10,13,'                       4. Sprite                      Php 30/-$'
-msg29 db 10,13,'                       5. Mountain Dew                Php 40/-$'
-msg30 db 10,13,'                       6. Boiled Egg                  Php 10/-$'
+msg25 db 10,13,'                       1. Extra Rice                  Php 20$'
+msg26 db 10,13,'                       2. Coke                        Php 30$'
+msg27 db 10,13,'                       3. Royal                       Php 30$' 
+msg28 db 10,13,'                       4. Sprite                      Php 30$'
+msg29 db 10,13,'                       5. Mountain Dew                Php 40$'
+msg30 db 10,13,'                       6. Boiled Egg                  Php 10$'
 
 ;Exit  
 msg32 db 10,13,'                       0. Exit$'
@@ -67,600 +67,592 @@ msg46 db 10,13,'                    Thank You for Ordering! Please Come Again!$'
 totPrice dw 0  
 currPrice dw 0
 Price_str db '000$', 0Ah
-currPriceL db 0
-currPriceH db 0
 currPrice_str db '000$', 0Ah 
 temp db 0
+tendw dw 10
+leadZeroFlag db ?
+operand dw ?
+operator dw ?
 
 .code
 main proc
 
-mov ax,@data
-mov ds,ax
+    mov ax,@data
+    mov ds,ax
 
-call Welcome ; welcome page
+    call Welcome ; welcome page
 
-call List ; Menu page
+    call List ; Menu page
  
-;Chicken list
-Chicken:
-
-;new line
-call NewLine
-call NewLine
-
-;List Start
-mov ah,9
-lea dx,msg12
-int 21h
-
-call NewLine
-
-mov ah,9
-lea dx,msg13
-int 21h
-lea dx,msg14
-int 21h
-lea dx,msg15
-int 21h
-lea dx,msg16
-int 21h
-lea dx,msg17
-int 21h   
-lea dx,msg32
-int 21h    
-lea dx,msg47
-int 21h
-
-;condition checking
-lea dx,msg34
-int 21h
-
-mov ah,1
-int 21h
-mov bl,al
-sub bl,48
-
-jz Exit
-
-cmp bl,1
-je twenty
-
-cmp bl,2
-je thirty
-
-cmp bl,3
-je fourty
-
-cmp bl,4
-je sixty
-
-cmp bl,5
-je fifty 
-
-cmp bl,9
-je menuList 
-
-call Invalid
-jmp Chicken
-
-;Beef List
-Beef:
-call NewLine
-call NewLine
-
-;List Start
-mov ah,9
-lea dx,msg18
-int 21h
-
-call NewLine
-
-mov ah,9
-lea dx,msg19
-int 21h
-lea dx,msg20
-int 21h
-lea dx,msg21
-int 21h
-lea dx,msg22
-int 21h
-lea dx,msg23
-int 21h
-lea dx,msg32
-int 21h   
-lea dx,msg47
-int 21h
-
-;condition checking
-lea dx,msg34
-int 21h
-
-mov ah,1
-int 21h
-mov bl,al
-sub bl,48
-
-jz Exit
-
-cmp bl,1
-je fourty
-
-cmp bl,2
-je fifty
-
-cmp bl,3
-je eighty
-
-cmp bl,4
-je hundred
-
-cmp bl,5
-je ninety 
-
-cmp bl,9
-je menuList   
-
-call Invalid
-jmp Beef
-
-AddOns:
-call NewLine
-call NewLine
-
-;List Start
-mov ah,9
-lea dx,msg24
-int 21h
-
-call NewLine
-
-mov ah,9
-lea dx,msg25
-int 21h
-lea dx,msg26
-int 21h
-lea dx,msg27
-int 21h
-lea dx,msg28
-int 21h
-lea dx,msg29
-int 21h 
-lea dx,msg30
-int 21h 
-lea dx,msg32
-int 21h   
-lea dx,msg47
-int 21h
-
-;condition checking
-lea dx,msg34
-int 21h
-
-mov ah,1
-int 21h
-mov bl,al
-sub bl,48
-
-jz Exit
-
-cmp bl,1
-je twenty
-
-cmp bl,2
-je thirty
-
-cmp bl,3
-je thirty
-
-cmp bl,4
-je thirty
-
-cmp bl,5
-je fourty 
-
-cmp bl,6
-je ten 
-
-cmp bl,9
-je menuList 
-
-call Invalid
-jmp AddOns
-
-
-;Prices
-Ten:
-mov bl,1
-call Multip
-
-call Rerun
-
-Twenty:
-mov bl,2
-call Multip
-
-call Rerun
-
-Thirty:
-mov bl,3
-call Multip
-
-call Rerun
-
-Fourty:
-mov bl,4
-call Multip
-
-call Rerun
-
-Fifty:
-mov bl,5
-call Multip
-
-call Rerun
-
-Sixty:
-mov bl,6
-call Multip
-
-call Rerun
-
-Seventy:
-mov bl,7
-call Multip
-
-call Rerun
-
-Eighty:
-mov bl,8
-call Multip
-
-call Rerun
-
-Ninety:
-mov bl,9
-call Multip
-
-call Rerun
-
-Hundred:
-mov bl,10
-call Multip
-
-call Rerun
-
-menuList:
-call List
-
-;To Exit
-Exit:
-call Alis 
-
-
-;Checkout
-Checkout:
-leave: 
-call Newline
-call Newline
-call TotalPrice
-
-mov ah,9
-lea dx,msg42
-int 21h              
-
-mov ah,9
-lea dx, Price_str
-int 21h
-
-mov ah,9
-lea dx,msg43
-int 21h   
-
-mov ah,9
-lea dx,msg44
-int 21h
-
-mov ah,9
-lea dx,msg48
-int 21h 
-
-mov ah,9
-lea dx,msg8
-int 21h
-
-mov ah,1
-int 21h
-mov bl,al
-sub bl,48
-
-jz Exit
-
-cmp bl, 9
-je Back
-
-cmp bl, 1
-jne inv  
-
-call Newline
-call Newline 
-mov ah,9
-lea dx, msg46
-int 21h
-mov ah,4ch
-int 21h     
-
-Back:
-call Rerun
-
-Inv:
-call Invalid
-jmp leave
+    ;Chicken list
+    Chicken:
+
+        ;new line
+        call NewLine
+        call NewLine
+
+        ;List Start
+        mov ah,9
+        lea dx,msg12
+        int 21h
+        
+        call NewLine
+        
+        mov ah,9
+        lea dx,msg13
+        int 21h
+        lea dx,msg14                   
+        int 21h
+        lea dx,msg15
+        int 21h
+        lea dx,msg16
+        int 21h
+        lea dx,msg17
+        int 21h   
+        lea dx,msg32
+        int 21h    
+        lea dx,msg47
+        int 21h
+        
+        ;condition checking
+        lea dx,msg34
+        int 21h
+        
+        mov ah,1
+        int 21h
+        mov bl,al
+        sub bl,48
+        
+        jz Exit
+        
+        cmp bl,1
+        je twenty
+        
+        cmp bl,2
+        je thirty
+        
+        cmp bl,3
+        je fourty
+        
+        cmp bl,4
+        je sixty
+        
+        cmp bl,5
+        je fifty 
+        
+        cmp bl,9
+        je menuList 
+        
+        call Invalid
+        jmp Chicken
+        
+    ;Beef List
+    Beef:
+        call NewLine
+        call NewLine
+        
+        ;List Start
+        mov ah,9
+        lea dx,msg18
+        int 21h
+        
+        call NewLine
+        
+        mov ah,9
+        lea dx,msg19
+        int 21h
+        lea dx,msg20
+        int 21h
+        lea dx,msg21
+        int 21h
+        lea dx,msg22
+        int 21h
+        lea dx,msg23
+        int 21h
+        lea dx,msg32
+        int 21h   
+        lea dx,msg47
+        int 21h
+        
+        ;condition checking
+        lea dx,msg34
+        int 21h
+        
+        mov ah,1
+        int 21h
+        mov bl,al
+        sub bl,48
+        
+        jz Exit
+        
+        cmp bl,1
+        je fourty
+        
+        cmp bl,2
+        je fifty
+        
+        cmp bl,3
+        je eighty
+        
+        cmp bl,4
+        je hundred
+        
+        cmp bl,5
+        je ninety 
+        
+        cmp bl,9
+        je menuList   
+        
+        call Invalid
+        jmp Beef
+
+    AddOns:
+        call NewLine
+        call NewLine
+
+        ;List Start
+        mov ah,9
+        lea dx,msg24
+        int 21h
+        
+        call NewLine
+        
+        mov ah,9
+        lea dx,msg25
+        int 21h
+        lea dx,msg26
+        int 21h
+        lea dx,msg27
+        int 21h
+        lea dx,msg28
+        int 21h
+        lea dx,msg29
+        int 21h 
+        lea dx,msg30
+        int 21h 
+        lea dx,msg32
+        int 21h   
+        lea dx,msg47
+        int 21h
+        
+        ;condition checking
+        lea dx,msg34
+        int 21h
+        
+        mov ah,1
+        int 21h
+        mov bl,al
+        sub bl,48
+        
+        jz Exit
+        
+        cmp bl,1
+        je twenty
+        
+        cmp bl,2
+        je thirty
+        
+        cmp bl,3
+        je thirty
+        
+        cmp bl,4
+        je thirty
+        
+        cmp bl,5
+        je fourty 
+        
+        cmp bl,6
+        je ten 
+        
+        cmp bl,9
+        je menuList 
+        
+        call Invalid
+        jmp AddOns
+
+
+    ;Prices
+    Ten:
+        mov bl,1
+        call Multip
+        
+        call Rerun
+
+    Twenty:
+        mov bl,2
+        call Multip
+        
+        call Rerun
+
+    Thirty:
+        mov bl,3
+        call Multip
+        
+        call Rerun
+        
+    Fourty:
+        mov bl,4
+        call Multip
+        
+        call Rerun
+        
+    Fifty:
+        mov bl,5
+        call Multip
+        
+        call Rerun
+
+    Sixty:
+        mov bl,6
+        call Multip
+        
+        call Rerun
+
+    Seventy:
+        mov bl,7
+        call Multip
+        
+        call Rerun
+
+    Eighty:
+        mov bl,8
+        call Multip
+
+        call Rerun
+
+    Ninety:
+        mov bl,9
+        call Multip
+        
+        call Rerun
+
+    Hundred:
+        mov bl,10
+        call Multip
+        
+        call Rerun
+
+    menuList:
+        call List
+
+    ;To Exit
+    Exit:
+        call Leave 
+
+    ;Checkout
+    Checkout:
+        call Newline
+        call Newline
+        call TotalPrice
+        
+        mov ah,9
+        lea dx,msg42
+        int 21h              
+        
+        cmp totPrice, 0
+        jnz printNum
+        
+        mov ah,2
+        mov dl, "0"
+        int 21h
+        jmp checkOutOptions
+        
+        printNum:
+            mov ah,9
+            lea dx, Price_str
+            int 21h
+        
+        checkOutOptions:
+            mov ah,9
+            lea dx,msg43
+            int 21h   
+            
+            mov ah,9
+            lea dx,msg44
+            int 21h
+            
+            mov ah,9
+            lea dx,msg48
+            int 21h 
+            
+            mov ah,9
+            lea dx,msg8
+            int 21h
+            
+            mov ah,1
+            int 21h
+            mov bl,al
+            sub bl,48 
+    
+            cmp bl, 9
+            je Back  
+            
+            cmp bl, 1
+            jg Inv 
+            
+            call Exit
+
+    Back:
+        call Rerun
+
+    Inv:
+        call Invalid
+        jmp checkOutOptions
 
 main endp   
 
 Multip proc 
-mov ah, 0
-mov currPrice, ax
+    mov ax, 0
+    mov currPrice, ax
+    
+    lea dx,msg35
+    mov ah,9
+    int 21h
+    
+    mov ah,1
+    int 21h
+    sub al,48
+    
+    mul bl
+    
+    mov cx, 10                                               
+    mul cx 
+    
+    cmp al, 0
+    jne totPriceL
+    
+    totPriceH:  
+        mul cx
+        add totPrice, ax 
+        add currPrice, ax
+        jmp totPriceL
 
-lea dx,msg35
-mov ah,9
-int 21h
+    totPriceL:
+        add totPrice, ax 
+        add currPrice, ax
+    
+    mov ax, currPrice
+    xor ah, ah
+    aam
+    
+    mov si, offset currPrice_str
+    
+    add al, '0'
+    mov [si+2], al
+    
+    mov al, ah
+    xor ah, ah
+    aam
+    add al, '0'
+    mov [si+1], al
+    
+    add ah, '0'
+    mov [si], ah
+    
+    mov ah,9
+    lea dx,msg37
+    int 21h
+    
+    cmp currPrice_str[0], 0
+    jne printAll
 
-mov ah,1
-int 21h
-sub al,48
-
-mul bl             
-
-mov currPriceL, al
-mov currPriceH, ah
-
-mov cx, 10                                               
-mul cx 
-
-cmp al, 0
-jne totPriceL
-
-totPriceH:  
-mul cx
-add totPrice, ax 
-add currPrice, ax
-jmp totPriceL
-
-totPriceL:
-add totPrice, ax 
-add currPrice, ax
-
-mov al, currPriceL
-mov ah, currPriceH
-
-mov ax, currPrice
-xor ah, ah
-aam
-
-mov si, offset currPrice_str
-
-add al, '0'
-mov [si+2], al
-
-mov al, ah
-xor ah, ah
-aam
-add al, '0'
-mov [si+1], al
-
-add ah, '0'
-mov [si], ah
-
-mov ah,9
-lea dx,msg37
-int 21h
-
-cmp [si], 0
-jne printAll
-
-printTens:
-mov al, [si+1]
-mov [si], al
-
-mov al, [si+2]
-mov [si+1], al   
-
-mov al, [si+3]
-mov [si+2], al  
-
-lea dx, currPrice_str
-int 21h
-ret      
-
-printAll:
-lea dx, currPrice_str
-int 21h 
-ret
+    printTens:
+        mov al, [si+1]
+        mov [si], al
+        
+        mov al, [si+2]
+        mov [si+1], al   
+        
+        mov al, [si+3]
+        mov [si+2], al  
+        
+        lea dx, currPrice_str
+        int 21h
+        ret      
+        
+    printAll:
+        lea dx, currPrice_str
+        int 21h 
+        ret
 Multip endp
 
 TotalPrice proc
-mov ax, totPrice
-xor dx, dx
-mov cx, 10
-div cx
-
-mov si, offset Price_str
-
-add dl, '0'
-mov [si+2], dl
-
-mov al, ah
-add al, '0'
-mov [si+1], al
-
-mov al, ah
-add al, '0'
-mov [si], al
-ret
+    mov ax, totPrice
+    xor ah, ah
+    aam
+    
+    mov si, offset Price_str
+    
+    add al, '0'
+    mov [si+2], al
+    
+    mov al, ah
+    xor ah, ah
+    aam
+    add al, '0'
+    mov [si+1], al
+    
+    add ah, '0'
+    mov [si], ah
+    ret
 TotalPrice endp
 
-mov ah,2
-mov dl, [si]
-int 21h
-
 Welcome proc
-MainPage:
-mov ah,9
-lea dx,msg1
-int 21h
-lea dx,msg2
-int 21h
-lea dx,msg3
-int 21h
-lea dx,msg4
-int 21h
-lea dx,msg6
-int 21h
-
-call NewLine
-call NewLine
-
-;take input to start
-mov ah,9
-lea dx,msg31
-int 21h 
-lea dx,msg40
-int 21h  
-lea dx,msg8
-int 21h     
-
-mov ah,1
-int 21h
-mov bh,al
-sub bh,48
-       
-jz Exit
-
-cmp bh,1
-je Menu
-
-call Invalid
-call NewLine                 
-jmp MainPage
-
-ret
+    MainPage:
+        mov ah,9
+        lea dx,msg1
+        int 21h
+        lea dx,msg2
+        int 21h
+        lea dx,msg3
+        int 21h
+        lea dx,msg4
+        int 21h
+        lea dx,msg6
+        int 21h
+        
+        call NewLine
+        call NewLine
+        
+        ;take input to start
+        mov ah,9
+        lea dx,msg31
+        int 21h 
+        lea dx,msg40
+        int 21h  
+        lea dx,msg8
+        int 21h     
+        
+        mov ah,1
+        int 21h
+        mov bh,al
+        sub bh,48
+               
+        jz Exit
+        
+        cmp bh,1
+        je Menu
+        
+        call Invalid
+        call NewLine                 
+        jmp MainPage
+        
+        ret
 Welcome endp
 
 List proc
-Menu:
-call NewLine
-call NewLine
-
-mov ah,9
-lea dx,msg7
-int 21h
-lea dx,msg9
-int 21h
-lea dx,msg10
-int 21h
-lea dx,msg11
-int 21h   
-lea dx,msg32
-int 21h   
-lea dx,msg49
-int 21h
-
-;list choose
-lea dx,msg8
-int 21h
-
-mov ah,1
-int 21h
-mov bh,al
-sub bh,48
-
-jz Alis
-
-cmp bh,1
-je Chicken
-
-cmp bh,2
-je Beef
-
-cmp bh,3
-je AddOns
-
-cmp bh,4
-je Leave
-
-call Invalid   
-jmp Menu
-ret
+    Menu:
+        call NewLine
+        call NewLine
+        
+        mov ah,9
+        lea dx,msg7
+        int 21h
+        lea dx,msg9
+        int 21h
+        lea dx,msg10
+        int 21h
+        lea dx,msg11
+        int 21h   
+        lea dx,msg32
+        int 21h   
+        lea dx,msg49
+        int 21h
+        
+        ;list choose
+        lea dx,msg8
+        int 21h
+        
+        mov ah,1
+        int 21h
+        mov bh,al
+        sub bh,48
+        
+        jz Leave
+        
+        cmp bh,1
+        je Chicken
+        
+        cmp bh,2
+        je Beef
+        
+        cmp bh,3
+        je AddOns
+        
+        cmp bh,4
+        je Checkout
+        
+        call Invalid   
+        jmp Menu
+        ret
 List endp
            
 Rerun proc   
-TryAgain:
-call NewLine
-
-mov ah,9
-lea dx,msg38
-int 21h
-
-mov ah,9
-lea dx,msg39
-int 21h   
-
-mov ah,9
-lea dx, msg45
-int 21h    
-
-mov ah,9
-lea dx,msg8
-int 21h
-
-mov ah,1
-int 21h
-sub al,48
-
-jz Exit
-
-cmp al,1
-je Menu
-
-cmp al,2
-je Checkout
-
-call Invalid 
-jmp TryAgain
-ret
+    TryAgain:
+        call NewLine
+        
+        mov ah,9
+        lea dx,msg38
+        int 21h
+        
+        mov ah,9
+        lea dx,msg39
+        int 21h   
+        
+        mov ah,9
+        lea dx, msg45
+        int 21h    
+        
+        mov ah,9
+        lea dx,msg8
+        int 21h
+        
+        mov ah,1
+        int 21h
+        sub al,48
+        
+        jz Exit
+        
+        cmp al,1
+        je Menu
+        
+        cmp al,2
+        je Checkout
+        
+        call Invalid 
+        jmp TryAgain
+        ret
 Rerun endp           
            
-Alis proc 
-call NewLine
-call NewLine
- 
-mov ah,9
-lea dx,msg33
-int 21h
-mov ah,4ch
-int 21h
-Alis endp   
+Leave proc 
+    call NewLine
+    call NewLine
+     
+    mov ah,9
+    lea dx,msg46
+    int 21h
+    mov ah,4ch
+    int 21h
+Leave endp   
    
 Invalid proc
-call NewLine
-call NewLine
-
-
-mov ah,9
-lea dx,msg36
-int 21h    
-ret
+    call NewLine
+    call NewLine
+    
+    
+    mov ah,9
+    lea dx,msg36
+    int 21h    
+    ret
 Invalid endp
 
 NewLine proc
-mov ah,2
-mov dl,0ah
-int 21h
-mov dl,0dh
-int 21h
-ret
+    mov ah,2
+    mov dl,0ah
+    int 21h
+    mov dl,0dh
+    int 21h
+    ret
 NewLine endp   
 
 end main
