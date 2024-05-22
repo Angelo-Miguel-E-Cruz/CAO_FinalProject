@@ -362,22 +362,18 @@ main proc
             int 21h
             mov bl,al
             sub bl,48 
-    
+            
+            cmp bl, 1
+            jle Exit  
+            
             cmp bl, 9
             je Back  
             
-            cmp bl, 1
-            jg Inv 
-            
-            call Exit
+            call Invalid
+            jmp checkOutOptions
 
     Back:
         call Rerun
-
-    Inv:
-        call Invalid
-        jmp checkOutOptions
-
 main endp   
 
 Multip proc 
@@ -632,10 +628,12 @@ Invalid proc
     call NewLine
     call NewLine
     
-    
     mov ah,9
     lea dx,msg36
-    int 21h    
+    int 21h     
+    
+    call NewLine
+    call NewLine 
     ret
 Invalid endp
 
