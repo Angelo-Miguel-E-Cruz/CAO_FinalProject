@@ -68,11 +68,6 @@ totPrice dw 0
 currPrice dw 0
 Price_str db '000$', 0Ah
 currPrice_str db '000$', 0Ah 
-temp db 0
-tendw dw 10
-leadZeroFlag db ?
-operand dw ?
-operator dw ?
 
 .code
 main proc
@@ -432,22 +427,22 @@ Multip proc
         add currPrice, ax
     
     mov ax, currPrice
-    xor ah, ah
-    aam
     
     mov si, offset currPrice_str
     
-    add al, '0'
-    mov [si+2], al
+    mov cx, 10
+    xor dx, dx
+    div cx
+    add dl, '0'
+    mov [si+2], dl
     
-    mov al, ah
-    xor ah, ah
-    aam
-    add al, '0'
-    mov [si+1], al
+    xor dx, dx
+    div cx
+    add dl, '0'
+    mov [si+1], dl
     
-    add ah, '0'
-    mov [si], ah
+    add al, '0'
+    mov [si], al
     
     mov ah,9
     lea dx,msg37
@@ -478,22 +473,22 @@ Multip endp
 
 TotalPrice proc
     mov ax, totPrice
-    xor ah, ah
-    aam
     
     mov si, offset Price_str
     
-    add al, '0'
-    mov [si+2], al
+    mov cx, 10
+    xor dx, dx
+    div cx
+    add dl, '0'
+    mov [si+2], dl
     
-    mov al, ah
-    xor ah, ah
-    aam
-    add al, '0'
-    mov [si+1], al
+    xor dx, dx
+    div cx
+    add dl, '0'
+    mov [si+1], dl
     
-    add ah, '0'
-    mov [si], ah
+    add al, '0'
+    mov [si], al
     ret
 TotalPrice endp
 
