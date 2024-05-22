@@ -395,9 +395,7 @@ Multip proc
   
     add totPrice, ax 
     add currPrice, ax 
-    
-    
-    
+     
     mov ax, currPrice
     
     mov si, offset currPrice_str
@@ -411,7 +409,10 @@ Multip proc
     xor dx, dx
     div cx
     add dl, '0'       
-    mov [si+2], dl    
+    mov [si+2], dl 
+    
+    cmp ax, 0
+    je moveCurrTwo   
      
     xor dx, dx
     div cx
@@ -434,6 +435,17 @@ Multip proc
        
        mov al, [si+3]
        mov [si+2], al   
+       
+       mov byte ptr [si+3], '$'
+       
+    movecurrTwo:
+       mov al, [si+3]
+       mov [si+1], al
+        
+       mov al, [si+2]
+       mov [si], al
+       
+       mov byte ptr [si+2], '$' 
        
        mov byte ptr [si+3], '$'
     
@@ -473,6 +485,9 @@ TotalPrice proc
     add dl, '0'
     mov [si+2], dl
     
+    cmp ax, 0
+    je move_twoSpots
+    
     xor dx, dx
     div cx
     add dl, '0'
@@ -480,7 +495,6 @@ TotalPrice proc
   
     cmp ax, 0
     je move_totPrice
-    
     
     add al, '0'
     mov [si], al 
@@ -495,6 +509,17 @@ TotalPrice proc
        
        mov al, [si+3]
        mov [si+2], al   
+       
+       mov byte ptr [si+3], '$'
+       
+    move_twoSpots:
+       mov al, [si+3]
+       mov [si+1], al
+        
+       mov al, [si+2]
+       mov [si], al
+       
+       mov byte ptr [si+2], '$' 
        
        mov byte ptr [si+3], '$'
        
