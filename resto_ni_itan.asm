@@ -269,64 +269,48 @@ main proc
     ;Prices
     Ten:
         mov bl,1
-        call Multip
-        
-        call Rerun
+        jmp toMultip
 
     Twenty:
         mov bl,2
-        call Multip
-        
-        call Rerun
+        jmp toMultip
 
     Thirty:
         mov bl,3
-        call Multip
-        
-        call Rerun
+        jmp toMultip
         
     Fourty:
         mov bl,4
-        call Multip
-        
-        call Rerun
+        jmp toMultip
         
     Fifty:
         mov bl,5
-        call Multip
-        
-        call Rerun
+        jmp toMultip
 
     Sixty:
         mov bl,6
-        call Multip
-        
-        call Rerun
+        jmp toMultip
 
     Seventy:
         mov bl,7
-        call Multip
-        
-        call Rerun
+        jmp toMultip
 
     Eighty:
         mov bl,8
-        call Multip
-
-        call Rerun
+        jmp toMultip
 
     Ninety:
         mov bl,9
-        call Multip
-        
-        call Rerun
+        jmp toMultip
 
     Hundred:
         mov bl,10
+        jmp toMultip
+    
+    toMultip:
         call Multip
-        
         call Rerun
-
+    
     menuList:
         call List
 
