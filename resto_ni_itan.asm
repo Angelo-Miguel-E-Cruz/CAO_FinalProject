@@ -412,19 +412,11 @@ Multip proc
     
     mov cx, 10                                               
     mul cx 
+  
+    add totPrice, ax 
+    add currPrice, ax 
     
-    cmp al, 0
-    jne totPriceL
     
-    totPriceH:  
-        mul cx
-        add totPrice, ax 
-        add currPrice, ax
-        jmp totPriceL
-
-    totPriceL:
-        add totPrice, ax 
-        add currPrice, ax
     
     mov ax, currPrice
     
@@ -441,34 +433,40 @@ Multip proc
     add dl, '0'
     mov [si+1], dl
     
-    add al, '0'
-    mov [si], al
-    
-    mov ah,9
-    lea dx,msg37
-    int 21h
-    
-    cmp currPrice_str[0], 0
-    jne printAll
+    cmp ax, 0
+    je moveCurrPrice
 
-    printTens:
-        mov al, [si+1]
-        mov [si], al
+    add al, '0'
+    mov [si], al 
+    jmp printCurrPrice
+    
+    moveCurrPrice:
+       mov al, [si+1]
+       mov [si], al
         
-        mov al, [si+2]
-        mov [si+1], al   
-        
-        mov al, [si+3]
-        mov [si+2], al  
-        
-        lea dx, currPrice_str
+       mov al, [si+2]
+       mov [si+1], al   
+       
+       mov byte ptr [si+2], '$'
+    
+    printCurrPrice:
+        mov ah,9
+        lea dx,msg37
         int 21h
-        ret      
         
-    printAll:
-        lea dx, currPrice_str
-        int 21h 
-        ret
+        cmp currPrice, 0
+        jnz printPrice
+        
+        mov ah,2
+        mov dl, "0"
+        int 21h
+        
+        printPrice:
+            mov ah,9
+            lea dx, currPrice_str
+            int 21h            
+            
+    ret
 Multip endp
 
 TotalPrice proc
@@ -486,10 +484,26 @@ TotalPrice proc
     div cx
     add dl, '0'
     mov [si+1], dl
+  
+    cmp ax, 0
+    je move_totPrice
+    
     
     add al, '0'
-    mov [si], al
-    ret
+    mov [si], al 
+    jmp doneTotPrice
+    
+    move_totPrice:
+       mov al, [si+1]
+       mov [si], al
+        
+       mov al, [si+2]
+       mov [si+1], al   
+       
+       mov byte ptr [si+2], '$'
+       
+    doneTotPrice:
+        ret
 TotalPrice endp
 
 Welcome proc
