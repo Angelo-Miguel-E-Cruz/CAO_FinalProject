@@ -67,7 +67,10 @@ msg46 db 10,13,'                  Thank You for Ordering! Please Come Again!$'
 totPrice dw 0  
 currPrice dw 0
 Price_str db '0000$', 0Ah
-currPrice_str db '0000$', 0Ah 
+currPrice_str db '0000$', 0Ah  
+
+;Check for first run
+isFirstRun db 1
 
 .code
 main proc
@@ -682,10 +685,15 @@ List proc
         lea dx,msg11
         int 21h   
         lea dx,msg32
-        int 21h   
+        int 21h         
+        
+        cmp isFirstRun, 0
+        jne FirstRun    
+        
         lea dx,msg49
         int 21h
         
+        FirstRun:
         ;list choose
         lea dx,msg8
         int 21h
@@ -706,26 +714,36 @@ List proc
         cmp bh,3
         je toExtra
         
+        cmp isFirstRun, 0
+        jne FirstRunOptions
+        
         cmp bh,4
         je toCheckOutM
-
+        
+        FirstRunOptions:
         call Invalid   
         jmp Menu
 
         toChicken:
-	call Chicken
+        mov ah, 1
+        sub isFirstRun, ah
+	    call Chicken
 
-        toBeef:
-	call Beef
+        toBeef:        
+        mov ah, 1
+        sub isFirstRun, ah
+	    call Beef
 
-        toExtra:
-	call Extra
+        toExtra:     
+        mov ah, 1
+        sub isFirstRun, ah
+	    call Extra
         
         menuExit:
-	call Exit
+	    call Exit
 
         toCheckOutM:
-	call Checkout
+	    call Checkout
         ret
 List endp
            
