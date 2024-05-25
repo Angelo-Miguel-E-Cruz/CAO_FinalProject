@@ -401,9 +401,9 @@ Welcome proc
         sub bh,48
                
         jz earlyExit
-        
+
         cmp bh,1
-        call toList
+        jle toList
         
         call Invalid
         call NewLine                 
@@ -456,19 +456,19 @@ Chicken proc
         
         jz exitC
         
-        cmp bl,1
+        cmp bl,1    
         je twentyC
         
-        cmp bl,2
+        cmp bl,2     
         je thirtyC
         
-        cmp bl,3
+        cmp bl, 3   
         je fourtyC
         
-        cmp bl,4
+        cmp bl,4    
         je sixtyC
         
-        cmp bl,5
+        cmp bl,5        
         je fiftyC 
         
         cmp bl,9
@@ -477,7 +477,7 @@ Chicken proc
         call Invalid
         jmp ChickenMenu
         
-	twentyC:
+	twentyC: 
 	call Twenty
 	
 	thirtyC:
@@ -486,10 +486,10 @@ Chicken proc
 	fourtyC:
 	call Fourty
 
-	sixtyC:
+	sixtyC: 
 	call Sixty
 
-	fiftyC:
+	fiftyC:   
 	call Fifty
 
 	exitC:
@@ -510,7 +510,7 @@ Beef proc
         mov ah,9
         lea dx,msg18
         int 21h
-        
+
         call NewLine
         
         mov ah,9
@@ -540,19 +540,19 @@ Beef proc
         
         jz exitB
         
-        cmp bl,1
+        cmp bl,1       
         je fourtyB
-        
-        cmp bl,2
+       
+        cmp bl,2       
         je fiftyB
         
-        cmp bl,3
+        cmp bl,3      
         je eightyB
         
-        cmp bl,4
+        cmp bl,4       
         je hundredB
         
-        cmp bl,5
+        cmp bl,5       
         je ninetyB
         
         cmp bl,9
@@ -561,10 +561,10 @@ Beef proc
         call Invalid
         jmp BeefMenu
 
-	fourtyB:
+	fourtyB: 
 	call Fourty
 
-	fiftyB:
+	fiftyB: 
 	call Fifty
 
 	eightyB:
@@ -573,7 +573,7 @@ Beef proc
 	hundredB:
 	call Hundred
 
-	ninetyB:
+	ninetyB:  
 	call Ninety
         
 	exitB:
@@ -626,22 +626,22 @@ Extra proc
         
         jz exitE
         
-        cmp bl,1
+        cmp bl,1     
         je twentyE
         
-        cmp bl,2
+        cmp bl,2       
         je thirtyE
         
-        cmp bl,3
+        cmp bl,3       
         je thirtyE
         
-        cmp bl,4
+        cmp bl,4      
         je thirtyE
         
-        cmp bl,5
+        cmp bl,5     
         je fourtyE
         
-        cmp bl,6
+        cmp bl,6      
         je tenE 
         
         cmp bl,9
@@ -650,17 +650,18 @@ Extra proc
         call Invalid
         jmp AddOnsMenu
         
-	twentyE:
+	twentyE: 
 	call Twenty
 
-	thirtyE:
+	thirtyE:  
 	call Thirty
 
 	fourtyE:
 	call Fourty
 
-	tenE:
+	tenE: 
 	call Ten
+
 	exitE:
 	call Exit
 	
@@ -726,18 +727,18 @@ List proc
 
         toChicken:
         mov ah, 1
-        sub isFirstRun, ah
-	    call Chicken
+        sub isFirstRun, ah  
+	call Chicken
 
         toBeef:        
         mov ah, 1
         sub isFirstRun, ah
-	    call Beef
+	call Beef
 
         toExtra:     
         mov ah, 1
         sub isFirstRun, ah
-	    call Extra
+	call Extra
         
         menuExit:
 	    call Exit
