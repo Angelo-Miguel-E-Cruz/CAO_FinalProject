@@ -195,9 +195,11 @@ Checkout proc
         int 21h
         mov bl,al
         sub bl,48 
-            
+        
+	jz checkOutExit
+    
         cmp bl, 1
-        jle checkOutExit  
+        je checkOutExit  
             
         cmp bl, 9
         je checkOutBack  
@@ -226,6 +228,15 @@ Multip proc
     int 21h
     sub al,48
     
+    cmp ax, 0
+    jge notInvalid
+    
+    cmp ax, 9
+    jle notInvalid
+
+    call Invalid
+
+    notInvalid:    
     mul bl
     
     mov cx, 10                                               
@@ -304,7 +315,7 @@ Multip proc
         printPrice:
             mov ah,9
             lea dx, currPrice_str
-            int 21h            
+            int 21h           
             
     ret
 Multip endp
@@ -403,7 +414,7 @@ Welcome proc
         jz earlyExit
 
         cmp bh,1
-        jle toList
+        je toList
         
         call Invalid
         call NewLine                 
