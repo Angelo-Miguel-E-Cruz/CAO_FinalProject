@@ -56,8 +56,9 @@ msg30 db 10,13,'                       6. Boiled Egg                  Php 10$'
 
 ;Exit  
 msg32 db 10,13,'                       0. Exit$'
-msg33 db 10,13,'                       Please Come Again!$'
-msg42 db 10,13,'                       Total Price: Php $'
+msg33 db 10,13,'                       Please Come Again!$'  
+msg50 db 10,13,'                       Order Breakdown:$'
+msg42 db 10,13,'                       Total Price:                Php $'
 msg43 db 10,13,'                       Press 1 to Confirm Payment$'
 msg44 db 10,13,'                       Press 0 to Cancel Order$'  
 msg48 db 10,13,'                       Press 9 to Go Back$'
@@ -71,6 +72,32 @@ currPrice_str db '0000$', 0Ah
 
 ;Check for first run
 isFirstRun db 1
+                                                     
+;Space String
+strSpace db 0Ah, 0Dh, '                       $', 0            
+strSpace2 db '             Php $', 0
+
+;Menu Strings
+c1 db 'Regular Chicken$', 0  
+c2 db 'Spicy Chicken  $', 0
+c3 db 'Double Regular $', 0
+c4 db 'Double Spicy   $', 0
+c5 db 'Mixed Chicken  $', 0  
+
+b1 db 'Regular Beef   $', 0
+b2 db 'Spicy Beef     $', 0
+b5 db 'Mixed Beef     $', 0
+
+a1 db 'Extra Rice     $', 0
+a2 db 'Coke           $', 0
+a3 db 'Royal          $', 0
+a4 db 'Sprite         $', 0
+a5 db 'Mountain Dew   $', 0
+a6 db 'Boiled Egg     $', 0
+
+;Arrays
+arOrder db 10 * 20 dup('$')   
+arPrice db 10 * 20 dup('$')
 
 .code
 main proc
@@ -150,14 +177,77 @@ Hundred proc
     ret
 Hundred endp
 
+OrderBreakdown proc
+    lea di, arOrder
+    lea si, arPrice
+    mov cx, 10
+    
+    printLoop:
+    cmp byte ptr [di], '$'
+    je exitPrint
+    
+    mov ah, 9
+    lea dx, strSpace
+    int 21h
+    
+    lea dx, [di]
+    int 21h 
+    
+    lea dx, strSpace2
+    int 21h
+    
+    lea dx, [si]
+    int 21h
+    
+    add di, 20
+    add si, 20
+                                 
+    ;call PriceBreakdown  
+    loop printLoop
+    
+    exitPrint:
+    ret
+OrderBreakdown endp
+
+PriceBreakdown proc
+    lea si, arPrice
+    mov cx, 10
+    
+    priceLoop:
+    cmp byte ptr [si], '$'
+    je exitPrice
+    
+    mov ah, 9
+    lea dx, strSpace2
+    int 21h
+    
+    lea dx, [si]
+    int 21h
+    
+    add di, 20
+    
+    loop priceLoop
+    
+    exitPrice:
+    ret
+PriceBreakdown endp
+
 Checkout proc
     call Newline
     call Newline
     call TotalPrice
         
     mov ah,9
+        
+    lea dx, msg50
+    int 21h 
+    
+    call OrderBreakdown 
+    call Newline 
+    
+    mov ah,9
     lea dx,msg42
-    int 21h              
+    int 21h                 
     
     mov ax, totPrice
     
@@ -174,7 +264,8 @@ Checkout proc
         lea dx, Price_str
         int 21h
         
-    checkOutOptions:
+    checkOutOptions: 
+        call Newline 
         mov ah,9
         lea dx,msg43
         int 21h   
@@ -297,8 +388,6 @@ Multip proc
        mov [si], al
        
        mov byte ptr [si+2], '$' 
-       
-       mov byte ptr [si+3], '$'
     
     printCurrPrice:
         mov ah,9
@@ -315,10 +404,29 @@ Multip proc
         printPrice:
             mov ah,9
             lea dx, currPrice_str
-            int 21h           
-            
+            int 21h
+                       
+    lea si, currPrice_str
+    call FindEmptyPrice
+    call CopyOrder        
     ret
 Multip endp
+
+FindEmptyPrice proc
+    lea di, arPrice
+    mov cx, 10
+    mov dx, 20
+    
+    findPriceLoop:
+    cmp byte ptr [di], '$'
+    je foundEmptyPrice
+    
+    add di, dx
+    loop findPriceLoop
+    
+    foundEmptyPrice:
+    ret
+FindEmptyPrice endp
 
 TotalPrice proc
     mov ax, totPrice
@@ -423,10 +531,39 @@ Welcome proc
 	toList:
 	call List
 
-        earlyExit:
+    earlyExit:
 	call Exit        
         ret
 Welcome endp
+
+CopyOrder proc  
+    copyLoop:
+        mov al, [si]
+        mov [di], al
+        inc si
+        inc di
+        cmp al, '$'  
+        je endCopy
+        jmp copyLoop
+    endCopy:
+    ret
+CopyOrder endp
+
+FindEmpty proc
+    lea di, arOrder
+    mov cx, 10
+    mov dx, 20
+    
+    findLoop:
+    cmp byte ptr [di], '$'
+    je foundEmpty
+    
+    add di, dx
+    loop findLoop
+    
+    foundEmpty:
+    ret
+FindEmpty endp
 
 Chicken proc
     ChickenMenu:
@@ -488,19 +625,34 @@ Chicken proc
         call Invalid
         jmp ChickenMenu
         
-	twentyC: 
+	twentyC:   
+	lea si, c1
+	call FindEmpty
+	call CopyOrder
 	call Twenty
 	
-	thirtyC:
+	thirtyC:   
+	lea si, c2
+	call FindEmpty
+	call CopyOrder
 	call Thirty
 
-	fourtyC:
+	fourtyC:                               
+	lea si, c3
+	call FindEmpty
+	call CopyOrder
 	call Fourty
 
-	sixtyC: 
+	sixtyC:   
+	lea si, c4
+	call FindEmpty
+	call CopyOrder 
 	call Sixty
 
 	fiftyC:   
+	lea si, c5
+	call FindEmpty
+	call CopyOrder  
 	call Fifty
 
 	exitC:
@@ -572,19 +724,34 @@ Beef proc
         call Invalid
         jmp BeefMenu
 
-	fourtyB: 
+	fourtyB:   
+	lea si, b1
+	call FindEmpty
+	call CopyOrder
 	call Fourty
 
-	fiftyB: 
+	fiftyB:   
+	lea si, b2
+	call FindEmpty
+	call CopyOrder 
 	call Fifty
 
-	eightyB:
+	eightyB:   
+	lea si, c3 
+	call FindEmpty
+	call CopyOrder
 	call Eighty
 
-	hundredB:
+	hundredB:   
+	lea si, c4  
+	call FindEmpty
+	call CopyOrder
 	call Hundred
 
-	ninetyB:  
+	ninetyB:   
+	lea si, b5   
+	call FindEmpty
+	call CopyOrder  
 	call Ninety
         
 	exitB:
@@ -640,14 +807,14 @@ Extra proc
         cmp bl,1     
         je twentyE
         
-        cmp bl,2       
-        je thirtyE
+        cmp bl,2          
+        je thirtyEC
         
-        cmp bl,3       
-        je thirtyE
+        cmp bl,3            
+        je thirtyER
         
-        cmp bl,4      
-        je thirtyE
+        cmp bl,4            
+        je thirtyES
         
         cmp bl,5     
         je fourtyE
@@ -661,16 +828,40 @@ Extra proc
         call Invalid
         jmp AddOnsMenu
         
-	twentyE: 
+	twentyE:   
+	lea si, a1   
+	call FindEmpty
+	call CopyOrder 
 	call Twenty
 
-	thirtyE:  
+	thirtyEC:
+	lea si, a2  
+    call FindEmpty
+    call CopyOrder       
+	call Thirty 
+
+	thirtyER:
+	lea si, a3  
+    call FindEmpty
+    call CopyOrder       
 	call Thirty
 
-	fourtyE:
+	thirtyES:
+	lea si, a4  
+    call FindEmpty
+    call CopyOrder       
+	call Thirty
+
+	fourtyE:     
+	lea si, a5   
+	call FindEmpty
+	call CopyOrder
 	call Fourty
 
-	tenE: 
+	tenE:     
+	lea si, a6    
+	call FindEmpty
+	call CopyOrder
 	call Ten
 
 	exitE:
@@ -738,18 +929,39 @@ List proc
 
         toChicken:
         mov ah, 1
+        cmp isFirstRun, 0
+        jg subChicken
+        
+        callChicken:
+        call Chicken
+        
+        subChicken:
         sub isFirstRun, ah  
-	call Chicken
+        jmp callChicken
 
         toBeef:        
         mov ah, 1
-        sub isFirstRun, ah
-	call Beef
+        cmp isFirstRun, 0
+        jg subBeef
+        
+        callBeef:
+        call Beef
+        
+        subBeef:
+        sub isFirstRun, ah  
+        jmp callBeef
 
         toExtra:     
         mov ah, 1
-        sub isFirstRun, ah
-	call Extra
+        cmp isFirstRun, 0
+        jg subExtra
+        
+        callExtra:
+        call Extra
+        
+        subExtra:
+        sub isFirstRun, ah  
+        jmp callExtra
         
         menuExit:
 	    call Exit
