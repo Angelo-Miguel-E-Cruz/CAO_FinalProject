@@ -95,6 +95,15 @@ a4 db 'Sprite         $', 0
 a5 db 'Mountain Dew   $', 0
 a6 db 'Boiled Egg     $', 0
 
+;Receipt
+filename db "receipt.txt", 0
+rec1 db "                   SALES REPORT             $", 0
+rec2 db 0Dh, 0Ah
+rec3 db "          Thank You for Ordering! Please Come Again!$", 0
+rec4 db "             Total Price:       $", 0
+fileHandle dw ?
+ROrder db ?
+    
 ;Arrays
 arOrder db 10 * 20 dup('$')   
 arPrice db 10 * 20 dup('$')
@@ -201,36 +210,54 @@ OrderBreakdown proc
     
     add di, 20
     add si, 20
-                                 
-    ;call PriceBreakdown  
+                                  
     loop printLoop
     
     exitPrint:
     ret
 OrderBreakdown endp
 
-PriceBreakdown proc
+ReceiptOrderBreakdown proc
+    lea di, arOrder
     lea si, arPrice
     mov cx, 10
     
-    priceLoop:
-    cmp byte ptr [si], '$'
-    je exitPrice
+    RprintLoop:
+    cmp byte ptr [di], '$'
+    je exitRPrint
     
-    mov ah, 9
-    lea dx, strSpace2
+    mov ah, 40h
+    mov bx, fileHandle
+    lea dx, strSpace
+    mov cx, 15
     int 21h
     
+    mov ah, 40h
+    mov bx, fileHandle
+    lea dx, [di]
+    mov cx, 15
+    int 21h 
+    
+    mov ah, 40h
+    mov bx, fileHandle
+    lea dx, strSpace2
+    mov cx, 4
+    int 21h
+
+    mov ah, 40h
+    mov bx, fileHandle    
     lea dx, [si]
+    mov cx, 4
     int 21h
     
     add di, 20
+    add si, 20
+                                  
+    loop RprintLoop
     
-    loop priceLoop
-    
-    exitPrice:
+    exitRPrint:
     ret
-PriceBreakdown endp
+ReceiptOrderBreakdown endp
 
 Checkout proc
     call Newline
@@ -299,6 +326,7 @@ Checkout proc
         jmp checkOutOptions
         
         checkOutExit:
+    call Receipt
 	call Exit
 
         checkOutBack:
@@ -970,6 +998,83 @@ List proc
 	    call Checkout
         ret
 List endp
+
+Receipt proc
+    
+    mov ah, 5bh ; open file function
+    mov al, 02h ; open for write
+    lea dx, filename ; point to filename
+    int 21h ; call DOS
+    mov fileHandle, ax ; save file handle
+
+    ; write to file
+    
+    mov ah, 40h ; write to file function
+    mov bx, fileHandle ; file handle
+    lea dx, rec1 ; point to message
+    mov cx, 31 ; number of bytes to write
+    int 21h ; call DOS
+    
+    call ReceiptOrderBreakdown
+    
+    mov ah, 40h ; write to file function
+    mov bx, fileHandle ; file handle
+    lea dx, rec2 ; point to newline
+    mov cx, 2 ; number of bytes to write (carriage return and line feed)
+    int 21h
+
+    mov ah, 40h ; write to file function
+    mov bx, fileHandle ; file handle
+    lea dx, rec2 ; point to newline
+    mov cx, 2 ; number of bytes to write (carriage return and line feed)
+    int 21h
+
+    
+    mov ah,40h
+    mov bx, fileHandle ;
+    lea dx, rec4
+    mov cx, 32 
+    int 21h                 
+    
+    mov ax, totPrice    
+    mov ah,40h
+    mov bx, fileHandle ;
+    lea dx, Price_str
+    mov cx, 4
+    int 21h
+        
+    mov ah, 40h
+    mov bx, fileHandle ;
+    mov dx, "0"
+    mov cx, 1
+    int 21h
+
+    mov ah, 40h ; write to file function
+    mov bx, fileHandle ; file handle
+    lea dx, rec2 ; point to newline
+    mov cx, 2 ; number of bytes to write (carriage return and line feed)
+    int 21h
+
+    mov ah, 40h ; write to file function
+    mov bx, fileHandle ; file handle
+    lea dx, rec2 ; point to newline
+    mov cx, 2 ; number of bytes to write (carriage return and line feed)
+    int 21h
+
+    mov ah, 40h ; write to file function
+    mov bx, fileHandle ; file handle
+    lea dx, rec3 ; point to message
+    mov cx, 52 ; number of bytes to write
+    int 21h ; call DOS
+
+    ; close file
+    mov ah, 3Eh ; close file function
+    mov bx, fileHandle ; file handle
+    int 21h ; call DOS
+    ret 
+        
+
+Receipt endp
            
 Rerun proc   
     TryAgain:
